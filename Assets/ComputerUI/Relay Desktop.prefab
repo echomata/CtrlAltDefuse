@@ -9031,12 +9031,10 @@ MonoBehaviour:
   standby: {fileID: 3550401766815691567}
   clicks: {fileID: 5134911817790421921}
   input: {fileID: 765105932738474505}
-  firstHijackDelay: 20
-  repeatDelay: 60
-  firstAdDelay: 8
-  repeatAdDelay: 45
-  firstEulaDelay: 14
-  repeatEulaDelay: 65
+  virusGapSeconds: 10
+  signalNoise: {fileID: 2800000, guid: 03ad015ceb704fed94519a6ed3be6e10, type: 3}
+  staticCrackle: {fileID: 8300000, guid: 29de6a253f5849fc9ad876f3c9deef8a, type: 3}
+  alarmClip: {fileID: 8300000, guid: add1eec2dc0f43cbabdb0622e06b5eba, type: 3}
   adChime: {fileID: 8300000, guid: c47866d0c5b1400ea67c1c31c69191e7, type: 3}
 --- !u!114 &765105932738474505
 MonoBehaviour:

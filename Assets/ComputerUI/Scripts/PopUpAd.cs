@@ -7,7 +7,8 @@ namespace CtrlAltDefuse.Desktop
     internal sealed class PopUpAd
     {
         readonly DesktopWindow window;
-        readonly RectTransform frame, closeButton;
+        readonly RectTransform frame;
+        readonly BlinkingDesktopTarget blinkingClose;
         public bool IsOpen => window.IsOpen;
 
         public PopUpAd(RelayDesktop desktop, System.Action dismissed)
@@ -21,17 +22,18 @@ namespace CtrlAltDefuse.Desktop
             window.titleBar.transform.Find("Pointer Guard").GetComponent<Text>().text = "Sponsored message";
             frame.Find(desktop.guardTitle.name).GetComponent<Text>().text = "You won a free upgrade!";
             frame.Find(desktop.guardMessage.name).GetComponent<Text>().text =
-                "Double your desk storage today. This exclusive RELAY offer expires at the end of your shift.";
+                "Double your desk storage today! Catch the blinking X to dismiss this offer.";
             frame.Find("Recalibrate").gameObject.SetActive(false);
 
             // Keep the Guard title bar's small, beveled X and its virtual-pointer hit target.
             var close = window.titleBar.GetComponentInChildren<Button>(true);
-            closeButton = (RectTransform)close.transform;
+            var closeButton = (RectTransform)close.transform;
             closeButton.SetParent(frame, false);
+            blinkingClose = new BlinkingDesktopTarget(closeButton, 1f, 1f);
             close.onClick = new Button.ButtonClickedEvent();
             close.onClick.AddListener(() =>
             {
-                if (!window.IsOpen) return;
+                if (!window.IsOpen || !close.gameObject.activeInHierarchy) return;
                 window.Close();
                 dismissed();
             });
@@ -39,12 +41,11 @@ namespace CtrlAltDefuse.Desktop
 
         public void Show()
         {
-            const float inset = 8;
-            closeButton.anchoredPosition = new Vector2(
-                Random.Range(inset, frame.rect.width - closeButton.rect.width - inset),
-                -Random.Range(inset, frame.rect.height - closeButton.rect.height - inset));
             window.Open();
+            blinkingClose.Show();
         }
+
+        public void Tick(float deltaTime) => blinkingClose.Tick(deltaTime);
 
         public void KeepInFront()
         {
