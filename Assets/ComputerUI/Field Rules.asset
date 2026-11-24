@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ee174ed5d4f4cbc897c1358dd60c27, type: 3}
+  m_Name: Field Rules
+  m_EditorClassIdentifier: Assembly-CSharp::CtrlAltDefuse.Desktop.ManualRuleTable
+  sections:
+  - tab: "Wires"
+    pages:
+    - title: "Cut one wire"
+      introduction: "Count the wires and read their colors from left to right. Use the page for that wire count. A wrong cut adds one strike."
+      rules:
+      - condition: "4 wires"
+        response: "Use the Four wires page."
+      - condition: "5 wires"
+        response: "Use the Five wires page."
+    - title: "Four wires"
+      introduction: "Check whether any color appears more than once. Use the first matching row."
+      rules:
+      - condition: "A color repeats"
+        response: "Cut the leftmost wire whose color appears more than once."
+      - condition: "All four colors differ"
+        response: "Cut the second wire from the left."
+    - title: "Five wires"
+      introduction: "Count how many times each color appears. Use the first matching row."
+      rules:
+      - condition: "A color appears once"
+        response: "Cut the leftmost wire whose color appears exactly once."
+      - condition: "Every color repeats"
+        response: "Cut the fourth wire from the left."
+  - tab: "Code Lock"
+    pages:
+    - title: "Decode the label"
+      introduction: "Read the three letters above the number pad. Convert one letter at a time using the next page. Enter the three digits in label order."
+      rules:
+      - condition: "Example: CAT"
+        response: "C gives 2, A gives 2, and T gives 8. Enter 228."
+      - condition: "Repeated letters"
+        response: "Enter the corresponding digit each time the letter appears."
+      - condition: "Wrong code"
+        response: "An incorrect entry adds one strike."
+    - title: "Letter-to-digit table"
+      introduction: "Look up each letter and keep the label\u2019s left-to-right order."
+      rules:
+      - condition: "A B C"
+        response: "2"
+      - condition: "D E F"
+        response: "3"
+      - condition: "G H I"
+        response: "4"
+      - condition: "J K L"
+        response: "5"
+      - condition: "M N O"
+        response: "6"
+      - condition: "P Q R S"
+        response: "7"
+      - condition: "T U V"
+        response: "8"
+      - condition: "W X Y Z"
+        response: "9"
+  - tab: "Lever Pull"
+    pages:
+    - title: "Watch the indicator"
+      introduction: "Watch the light on the module in the bomb view. Pull the lever once while the light is green."
+      rules:
+      - condition: "Green"
+        response: "Pull now."
+      - condition: "Any other color"
+        response: "Wait for green. An early or late pull adds one strike."
+  - tab: "Countdown"
+    pages:
+    - title: "Time and strikes"
+      introduction: "Each round starts at 5:00. The countdown keeps running while you consult the manual, handle pop-ups, or switch views."
+      rules:
+      - condition: "Win"
+        response: "Defuse Wires, Code Lock, and Lever Pull before 0:00."
+      - condition: "Time expires"
+        response: "The bomb explodes at 0:00."
+      - condition: "Third strike"
+        response: "The round ends immediately. Wrong cuts, codes, and lever pulls each add one strike."
+  - tab: "PC Recovery"
+    pages:
+    - title: "Clear blocked pages"
+      introduction: "Use the module tabs for defusal rules. Pop-ups can cover those pages while the countdown keeps running."
+      rules:
+      - condition: "Pop-up Ad"
+        response: "After the chime, look for the tiny X. It can appear anywhere inside the ad."
+      - condition: "Long EULA"
+        response: "Scroll to the end, then click Accept."
+      - condition: "Captcha Wall"
+        response: "Type the characters shown and submit the answer."
+    - title: "Restore pointer and scroll"
+      introduction: "Use the desktop recovery controls when the cursor or manual starts moving on its own."
+      rules:
+      - condition: "Cursor Hijack"
+        response: "If the pointer drifts or reverses, click Recalibrate on the taskbar."
+      - condition: "Scroll Hijack"
+        response: "If the manual jumps between pages, choose Recalibrate Scroll Wheel."
+      - condition: "Cursor Particle Trail"
+        response: "Click Recalibrate on the taskbar to clear the trail."
+    - title: "Restore audio and display"
+      introduction: "Use the PC controls to recover the manual when an alarm or display fault interrupts you."
+      rules:
+      - condition: "Loud Audio"
+        response: "Find the flashing Mute button and click it to silence the alarm."
+      - condition: "Screen Glitch"
+        response: "If the display flickers, blurs, or inverts, turn the PC off and back on."
+      - condition: "Wrong Language"
+        response: "Reload the manual website to restore the original language."
