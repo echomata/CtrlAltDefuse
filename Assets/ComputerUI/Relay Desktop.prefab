@@ -9033,6 +9033,11 @@ MonoBehaviour:
   input: {fileID: 765105932738474505}
   firstHijackDelay: 20
   repeatDelay: 60
+  firstAdDelay: 8
+  repeatAdDelay: 45
+  firstEulaDelay: 14
+  repeatEulaDelay: 65
+  adChime: {fileID: 8300000, guid: c47866d0c5b1400ea67c1c31c69191e7, type: 3}
 --- !u!114 &765105932738474505
 MonoBehaviour:
   m_ObjectHideFlags: 0
