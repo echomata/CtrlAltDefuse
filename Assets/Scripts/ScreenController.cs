@@ -41,6 +41,30 @@ namespace CtrlAltDefuse.Gameplay
         bool frozen, resumeRequested, loading;
         int shownFrame;
 
+#if UNITY_EDITOR
+        static bool showHitboxes;
+        GameObject primaryHitbox, secondaryHitbox;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetHitboxes() => showHitboxes = false;
+
+        void ToggleHitboxes()
+        {
+            showHitboxes = !showHitboxes;
+            primaryHitbox.SetActive(showHitboxes);
+            secondaryHitbox.SetActive(showHitboxes);
+        }
+
+        static GameObject CreateHitbox(Button button, Color tint)
+        {
+            var highlight = CreateRect("Test hitbox", button.transform).gameObject.AddComponent<Image>();
+            highlight.color = tint;
+            highlight.raycastTarget = false;
+            highlight.gameObject.SetActive(showHitboxes);
+            return highlight.gameObject;
+        }
+#endif
+
         void Start()
         {
             BuildOverlay();
@@ -57,9 +81,17 @@ namespace CtrlAltDefuse.Gameplay
 
         void Update()
         {
-            if (!round || frozen || round.State != RoundState.Playing) return;
             var keyboard = Keyboard.current;
             if (keyboard == null) return;
+#if UNITY_EDITOR
+            if (keyboard.f7Key.wasPressedThisFrame)
+                ToggleHitboxes();
+#endif
+            if (!round || frozen || round.State != RoundState.Playing) return;
+#if UNITY_EDITOR
+            if (keyboard.f8Key.wasPressedThisFrame) { VictoryTest.Trigger(round); return; }
+            if (keyboard.f9Key.wasPressedThisFrame) { DefeatTest.Trigger(round); return; }
+#endif
 
             bool atDesk = !(bombPanel && bombPanel.Focused) && !(monitor && monitor.Engaged);
             if (keyboard.pKey.wasPressedThisFrame || (atDesk && keyboard.escapeKey.wasPressedThisFrame))
@@ -182,6 +214,10 @@ namespace CtrlAltDefuse.Gameplay
             SetRegion(detail.rectTransform, new Rect(.1f, .415f, .8f, .07f));
             primary = CreateButton("Primary action", content, out primaryLabel);
             secondary = CreateButton("Secondary action", content, out secondaryLabel);
+#if UNITY_EDITOR
+            primaryHitbox = CreateHitbox(primary, new Color(0f, 1f, 1f, .45f));
+            secondaryHitbox = CreateHitbox(secondary, new Color(1f, .25f, .8f, .45f));
+#endif
             overlay.SetActive(false);
         }
 
