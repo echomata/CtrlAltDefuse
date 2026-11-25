@@ -6,6 +6,7 @@ namespace CtrlAltDefuse.Desktop
     [CreateAssetMenu(menuName = "Ctrl Alt Defuse/Manual Rule Table")]
     public sealed class ManualRuleTable : ScriptableObject
     {
+        public ManualRuleTable spanish;
         public Section[] sections = Array.Empty<Section>();
 
         [Serializable]

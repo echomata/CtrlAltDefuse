@@ -69,11 +69,7 @@ namespace CtrlAltDefuse.Desktop
 
             Vector2 delta = mouse.delta.ReadValue() * pointerSpeed;
             if (desktop.Hijacked && !desktop.Sleeping)
-            {
-                if (desktop.CursorInverted) delta = -delta;
-                float t = Time.unscaledTime;
-                delta += new Vector2(Mathf.Sin(t * 2.6f), Mathf.Cos(t * 3.1f)) * (66 * Time.unscaledDeltaTime);
-            }
+                delta = desktop.DistortPointer(delta, Time.unscaledDeltaTime);
             MoveCursor(position + delta);
             Dispatch(mouse);
         }

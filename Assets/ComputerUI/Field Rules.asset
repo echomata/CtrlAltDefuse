@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35ee174ed5d4f4cbc897c1358dd60c27, type: 3}
   m_Name: Field Rules
   m_EditorClassIdentifier: Assembly-CSharp::CtrlAltDefuse.Desktop.ManualRuleTable
+  spanish: {fileID: 11400000, guid: 85724fa0033244bba8a72b89f7fb2113, type: 2}
   sections:
   - tab: "Wires"
     pages:
@@ -92,26 +93,24 @@ MonoBehaviour:
       introduction: "Use the module tabs for defusal rules. Pop-ups can cover those pages while the countdown keeps running."
       rules:
       - condition: "Pop-up Ad"
-        response: "After the chime, look for the tiny X. It can appear anywhere inside the ad."
+        response: "After the chime, close all seven ads. Click each tiny X while it is visible. It reappears elsewhere inside its own window."
       - condition: "Long EULA"
         response: "Scroll to the end, then click Accept."
       - condition: "Captcha Wall"
         response: "Type the characters shown and submit the answer."
-    - title: "Restore pointer and scroll"
-      introduction: "Use the desktop recovery controls when the cursor or manual starts moving on its own."
+    - title: "Restore the pointer"
+      introduction: "Use the desktop recovery controls when the pointer drifts or leaves a trail."
       rules:
       - condition: "Cursor Hijack"
-        response: "If the pointer drifts or reverses, click Recalibrate on the taskbar."
-      - condition: "Scroll Hijack"
-        response: "If the manual jumps between pages, choose Recalibrate Scroll Wheel."
+        response: "Click Recalibrate in both Pointer Guard windows to stop the cursor from drifting and reversing."
       - condition: "Cursor Particle Trail"
-        response: "Click Recalibrate on the taskbar to clear the trail."
+        response: "Catch the moving Pointer Guard alert and click Recalibrate Cursor before it disappears."
     - title: "Restore audio and display"
       introduction: "Use the PC controls to recover the manual when an alarm or display fault interrupts you."
       rules:
       - condition: "Loud Audio"
         response: "Find the flashing Mute button and click it to silence the alarm."
       - condition: "Screen Glitch"
-        response: "If the display flickers, blurs, or inverts, turn the PC off and back on."
+        response: "Hold Power Off for three seconds until the line fills. Then hold Wake monitor for three seconds to restore the display."
       - condition: "Wrong Language"
         response: "Reload the manual website to restore the original language."

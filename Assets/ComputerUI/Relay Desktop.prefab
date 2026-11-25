@@ -9031,8 +9031,34 @@ MonoBehaviour:
   standby: {fileID: 3550401766815691567}
   clicks: {fileID: 5134911817790421921}
   input: {fileID: 765105932738474505}
-  firstHijackDelay: 20
-  repeatDelay: 60
+  virusGapSeconds: 10
+  reloadIcon: {fileID: 2800000, guid: a04763807a2c4f36b363a3a35cae7412, type: 3}
+  signalNoise: {fileID: 2800000, guid: 03ad015ceb704fed94519a6ed3be6e10, type: 3}
+  staticCrackle: {fileID: 8300000, guid: 29de6a253f5849fc9ad876f3c9deef8a, type: 3}
+  alarmClip: {fileID: 8300000, guid: add1eec2dc0f43cbabdb0622e06b5eba, type: 3}
+  adDesigns:
+  - caption: Orbit Airways
+    poster: {fileID: 2800000, guid: c73931f55f125b68b0ab97184a08b377, type: 3}
+    desktopPosition: {x: 0, y: 1}
+  - caption: Bloom Florist
+    poster: {fileID: 2800000, guid: d7c7b08a5a26574ba040db14607e38d9, type: 3}
+    desktopPosition: {x: 0.51, y: 0.98}
+  - caption: Night Shift Coffee
+    poster: {fileID: 2800000, guid: 3ca5370913c75032a319b751385513c2, type: 3}
+    desktopPosition: {x: 1, y: 0.99}
+  - caption: Apex Racing
+    poster: {fileID: 2800000, guid: a564a91c787b59aabde621952bc1a7f7, type: 3}
+    desktopPosition: {x: 0.21, y: 0.5}
+  - caption: Rewind Video
+    poster: {fileID: 2800000, guid: a205c682c6fe53229857c84c39dcbed9, type: 3}
+    desktopPosition: {x: 0.8, y: 0.51}
+  - caption: Citrus Soda
+    poster: {fileID: 2800000, guid: cbeb008aaf1d5990b4775305b8bfbb09, type: 3}
+    desktopPosition: {x: 0.08, y: 0.01}
+  - caption: Byte Bank Storage
+    poster: {fileID: 2800000, guid: ffba41b2d9425b0698a19f3db147e8b8, type: 3}
+    desktopPosition: {x: 0.91, y: 0.025}
+  adChime: {fileID: 8300000, guid: c47866d0c5b1400ea67c1c31c69191e7, type: 3}
 --- !u!114 &765105932738474505
 MonoBehaviour:
   m_ObjectHideFlags: 0
