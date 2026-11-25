@@ -109,7 +109,7 @@ MonoBehaviour:
       introduction: "Usa los controles del PC para volver al manual si te interrumpe una alarma o un fallo de pantalla."
       rules:
       - condition: "Alarma"
-        response: "Busca el botón Silenciar que parpadea y púlsalo para detener la alarma."
+        response: "Pulsa el botón Silenciar que parpadea para abrir el mezclador. Silencia el canal cuyo indicador pulsa al ritmo de la alarma."
       - condition: "Fallo de pantalla"
         response: "Mantén pulsado Apagar durante tres segundos hasta que la línea se llene. Luego mantén pulsado Activar monitor otros tres segundos para recuperar la imagen."
       - condition: "Idioma incorrecto"

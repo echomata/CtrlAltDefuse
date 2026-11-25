@@ -36,6 +36,7 @@ namespace CtrlAltDefuse.Desktop
         LongEulaPopup eula;
         PopUpAd ad;
         DesktopWindow upperCalibration, lowerCalibration;
+        float calibrationDriftTime;
         Virus nextVirus;
         bool PopupOpen => (ad?.IsOpen ?? false) || (eula?.IsOpen ?? false) || (alarm?.IsOpen ?? false)
             || (glitch?.IsOpen ?? false) || (captcha?.IsOpen ?? false) || (trail?.IsOpen ?? false)
@@ -97,6 +98,9 @@ namespace CtrlAltDefuse.Desktop
             if (!input.Engaged || Sleeping) return;
             if (Hijacked)
             {
+                calibrationDriftTime += deltaTime;
+                PositionCalibration(upperCalibration, true);
+                PositionCalibration(lowerCalibration, false);
                 hijackPhase = Mathf.Repeat(hijackPhase + deltaTime, HijackCycleSeconds);
                 surgeRemaining -= deltaTime;
                 if (surgeRemaining <= 0) StartPointerSurge();
@@ -168,26 +172,43 @@ namespace CtrlAltDefuse.Desktop
         {
             if (nextVirus != Virus.CursorHijack || Sleeping || Hijacked || PopupOpen) return;
             hijackPhase = 0f;
+            calibrationDriftTime = 0f;
             StartPointerSurge();
             Hijacked = true;
             guard.Close();
             if (!upperCalibration)
-                upperCalibration = CreateCalibration("Pointer tracking", Vector2.up, new Vector2(14, -14));
+                upperCalibration = CreateCalibration("Pointer tracking", Vector2.up);
             if (!lowerCalibration)
-                lowerCalibration = CreateCalibration("Pointer direction", Vector2.right, new Vector2(-14, 14));
+                lowerCalibration = CreateCalibration("Pointer direction", Vector2.right);
             upperCalibration.Open();
             lowerCalibration.Open();
+            PositionCalibration(upperCalibration, true);
+            PositionCalibration(lowerCalibration, false);
             UpdateStatus();
             PlayClick();
         }
 
-        DesktopWindow CreateCalibration(string channel, Vector2 anchor, Vector2 offset)
+        void PositionCalibration(DesktopWindow window, bool upper)
+        {
+            if (!window.IsOpen) return;
+            var frame = (RectTransform)window.transform;
+            var desk = ((RectTransform)frame.parent).rect;
+            // Keep each dialog in its own half, with room for the window shadow.
+            const float inset = 14f;
+            float travelX = Mathf.Clamp(desk.width - frame.rect.width - 2 * inset, 0, 110);
+            float travelY = Mathf.Clamp(desk.height * .5f - frame.rect.height - 2 * inset, 0, 30);
+            float t = calibrationDriftTime * (upper ? .40f : .46f);
+            float x = inset + travelX * (.5f - .5f * Mathf.Cos(t));
+            float y = inset + travelY * (.5f + .5f * Mathf.Sin(t * 1.3f));
+            frame.anchoredPosition = upper ? new Vector2(x, -y) : new Vector2(-x, y);
+        }
+
+        DesktopWindow CreateCalibration(string channel, Vector2 anchor)
         {
             var window = Instantiate(guard, guard.transform.parent);
             window.name = channel;
             var frame = (RectTransform)window.transform;
             frame.anchorMin = frame.anchorMax = frame.pivot = anchor;
-            frame.anchoredPosition = offset;
             frame.Find(guardTitle.name).GetComponent<Text>().text = channel;
             frame.Find(guardMessage.name).GetComponent<Text>().text =
                 "Click Recalibrate in both windows to restore cursor control.";

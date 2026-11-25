@@ -109,7 +109,7 @@ MonoBehaviour:
       introduction: "Use the PC controls to recover the manual when an alarm or display fault interrupts you."
       rules:
       - condition: "Loud Audio"
-        response: "Find the flashing Mute button and click it to silence the alarm."
+        response: "Click the flashing Mute button to open the mixer. Mute the channel whose meter pulses with the alarm."
       - condition: "Screen Glitch"
         response: "Hold Power Off for three seconds until the line fills. Then hold Wake monitor for three seconds to restore the display."
       - condition: "Wrong Language"
