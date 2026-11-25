@@ -13,6 +13,7 @@ namespace CtrlAltDefuse.Gameplay
         public float SecondsLeft { get; private set; }
         public int Strikes { get; private set; }
         public RoundState State { get; private set; }
+        public bool IsPlaying => State == RoundState.Playing && Time.timeScale > 0f;
         readonly HashSet<Module> solved = new();
 
         void Awake() => SecondsLeft = roundSeconds;

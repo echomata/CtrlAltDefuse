@@ -1927,6 +1927,117 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &910000101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000102}
+  - component: {fileID: 910000104}
+  - component: {fileID: 910000103}
+  m_Layer: 0
+  m_Name: Round
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cbcc3c3e1e7a3b4787d59a086bc4502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CtrlAltDefuse.Gameplay.GameManager
+  roundSeconds: 300
+--- !u!114 &910000104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeb2dbdc7ab04a0da0b6c4077c389138, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CtrlAltDefuse.Gameplay.ScreenController
+  round: {fileID: 910000103}
+  mainMenu:
+    primary:
+      serializedVersion: 2
+      x: 0.375
+      y: 0.56
+      width: 0.25
+      height: 0.075
+    secondary:
+      serializedVersion: 2
+      x: 0.375
+      y: 0.655
+      width: 0.25
+      height: 0.075
+  pause:
+    primary:
+      serializedVersion: 2
+      x: 0.3677083
+      y: 0.3962963
+      width: 0.2651042
+      height: 0.112963
+    secondary:
+      serializedVersion: 2
+      x: 0.440625
+      y: 0.5398148
+      width: 0.1197917
+      height: 0.0861111
+  victory:
+    primary:
+      serializedVersion: 2
+      x: 0.384375
+      y: 0.6648148
+      width: 0.2333333
+      height: 0.0888889
+    secondary:
+      serializedVersion: 2
+      x: 0.440625
+      y: 0.7638889
+      width: 0.1197917
+      height: 0.0861111
+  defeat:
+    primary:
+      serializedVersion: 2
+      x: 0.384375
+      y: 0.6648148
+      width: 0.2333333
+      height: 0.0888889
+    secondary:
+      serializedVersion: 2
+      x: 0.440625
+      y: 0.7638889
+      width: 0.1197917
+      height: 0.0861111
 --- !u!43 &1153602500
 Mesh:
   m_ObjectHideFlags: 0
@@ -4325,104 +4436,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 751feb68c9323be4fb75f07da2300a94, type: 3}
---- !u!1 &910000101
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000102}
-  - component: {fileID: 910000104}
-  - component: {fileID: 910000103}
-  m_Layer: 0
-  m_Name: Round
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000102
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000101}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000101}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cbcc3c3e1e7a3b4787d59a086bc4502, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::CtrlAltDefuse.Gameplay.GameManager
-  roundSeconds: 300
---- !u!114 &910000104
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000101}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeb2dbdc7ab04a0da0b6c4077c389138, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::CtrlAltDefuse.Gameplay.ScreenController
-  round: {fileID: 910000103}
-  pause:
-    primary:
-      serializedVersion: 2
-      x: 0.3677083
-      y: 0.3962963
-      width: 0.2651042
-      height: 0.1129630
-    secondary:
-      serializedVersion: 2
-      x: 0.4406250
-      y: 0.5398148
-      width: 0.1197917
-      height: 0.0861111
-  victory:
-    primary:
-      serializedVersion: 2
-      x: 0.3843750
-      y: 0.6648148
-      width: 0.2333333
-      height: 0.0888889
-    secondary:
-      serializedVersion: 2
-      x: 0.4406250
-      y: 0.7638889
-      width: 0.1197917
-      height: 0.0861111
-  defeat:
-    primary:
-      serializedVersion: 2
-      x: 0.3843750
-      y: 0.6648148
-      width: 0.2333333
-      height: 0.0888889
-    secondary:
-      serializedVersion: 2
-      x: 0.4406250
-      y: 0.7638889
-      width: 0.1197917
-      height: 0.0861111
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
