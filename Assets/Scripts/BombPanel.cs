@@ -1,12 +1,11 @@
 using CtrlAltDefuse.Desktop;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace CtrlAltDefuse.Gameplay
 {
-    [RequireComponent(typeof(GameManager), typeof(CodeLock), typeof(CanvasGroup))]
+    [RequireComponent(typeof(CodeLock), typeof(CanvasGroup))]
     public sealed class BombPanel : MonoBehaviour
     {
         public Text countdown, strikes, label, entry, feedback, hint;
@@ -22,13 +21,18 @@ namespace CtrlAltDefuse.Gameplay
         GameObject crosshair;
         Vector3 deskPosition;
         Quaternion deskRotation;
-        bool focused;
+        public bool Focused { get; private set; }
         bool showCrosshair;
 
         void Start()
         {
-            round = GetComponent<GameManager>();
             codeLock = GetComponent<CodeLock>();
+            round = codeLock.Round;
+            if (!round)
+            {
+                enabled = false;
+                return;
+            }
             controls = GetComponent<CanvasGroup>();
             controls.interactable = false;
             housing = GetComponentInParent<Collider>();
@@ -51,15 +55,8 @@ namespace CtrlAltDefuse.Gameplay
         void Update()
         {
             var keyboard = Keyboard.current;
-            if (round.State != RoundState.Playing)
-            {
-                if (!focused) Focus();
-                controls.interactable = false;
-                if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
-                    SceneManager.LoadScene(gameObject.scene.buildIndex);
-                return;
-            }
-            if (!focused)
+            if (Time.timeScale == 0f || round.State != RoundState.Playing) return;
+            if (!Focused)
             {
                 if (monitor && monitor.Engaged) return;
                 bool interact = Mouse.current?.leftButton.wasPressedThisFrame == true ||
@@ -99,7 +96,7 @@ namespace CtrlAltDefuse.Gameplay
             view.transform.SetPositionAndRotation(panel.position - panel.forward * distance, panel.rotation);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            focused = controls.interactable = true;
+            Focused = controls.interactable = true;
         }
 
         void Leave()
@@ -110,7 +107,7 @@ namespace CtrlAltDefuse.Gameplay
             if (monitor) monitor.enabled = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            focused = controls.interactable = false;
+            Focused = controls.interactable = false;
         }
 
         void LateUpdate() => RefreshDisplay();
@@ -122,11 +119,7 @@ namespace CtrlAltDefuse.Gameplay
             strikes.text = $"STRIKES   {round.Strikes} / 3";
             entry.text = codeLock.Entry.PadRight(3, '-');
             feedback.text = codeLock.Feedback;
-            hint.text = focused ? "ESC   /   BACK TO DESK" : "CLICK OR E   /   INSPECT";
-            if (round.State == RoundState.Playing) return;
-            feedback.text = round.State == RoundState.Won ? "ROUND WON" :
-                round.Strikes == 3 ? "ROUND LOST   /   3 STRIKES" : "ROUND LOST   /   TIME UP";
-            hint.text = "R   /   RESTART ROUND";
+            hint.text = Focused ? "ESC   /   BACK TO DESK" : "CLICK OR E   /   INSPECT";
         }
     }
 }

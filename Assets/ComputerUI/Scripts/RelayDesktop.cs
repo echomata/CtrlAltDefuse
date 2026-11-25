@@ -39,6 +39,7 @@ namespace CtrlAltDefuse.Desktop
 
         void Update()
         {
+            if (Time.timeScale == 0f) return;
             if (!input.Engaged || Sleeping) return;
             if (Hijacked)
             {

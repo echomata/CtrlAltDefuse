@@ -44,6 +44,7 @@ namespace CtrlAltDefuse.Desktop
 
         void Update()
         {
+            if (Time.timeScale == 0f) return;
             var mouse = Mouse.current;
             if (!view || mouse == null) return;
             if (!Engaged)

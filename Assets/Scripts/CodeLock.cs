@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace CtrlAltDefuse.Gameplay
 {
-    [RequireComponent(typeof(GameManager))]
     public sealed class CodeLock : MonoBehaviour
     {
         // The eight letter groups appear in the same order in the PC manual.
@@ -13,12 +12,12 @@ namespace CtrlAltDefuse.Gameplay
         public string Entry { get; private set; } = "";
         public bool Solved { get; private set; }
         public string Feedback { get; private set; } = "ENTER 3 DIGITS";
-        GameManager round;
+        public GameManager Round { get; private set; }
         string answer;
 
         void Awake()
         {
-            round = GetComponent<GameManager>();
+            Round = FindAnyObjectByType<GameManager>();
             Label = Labels[Random.Range(0, Labels.Length)];
             answer = Encode(Label);
         }
@@ -37,32 +36,32 @@ namespace CtrlAltDefuse.Gameplay
 
         public void PressDigit(int digit)
         {
-            if (Solved || round.State != RoundState.Playing || Entry.Length == 3 || digit < 0 || digit > 9) return;
+            if (Solved || !Round || Round.State != RoundState.Playing || Entry.Length == 3 || digit < 0 || digit > 9) return;
             Entry += digit.ToString();
             Feedback = Entry.Length == 3 ? "PRESS ENTER" : "ENTER 3 DIGITS";
         }
 
         public void Clear()
         {
-            if (Solved || round.State != RoundState.Playing) return;
+            if (Solved || !Round || Round.State != RoundState.Playing) return;
             Entry = "";
             Feedback = "ENTER 3 DIGITS";
         }
 
         public void Submit()
         {
-            if (Solved || round.State != RoundState.Playing || Entry.Length != 3) return;
+            if (Solved || !Round || Round.State != RoundState.Playing || Entry.Length != 3) return;
             if (Entry == answer)
             {
                 Solved = true;
                 Feedback = "MODULE DEFUSED";
-                round.Defuse(Module.CodeLock);
+                Round.Defuse(Module.CodeLock);
             }
             else
             {
                 Entry = "";
                 Feedback = "WRONG CODE";
-                round.AddStrike();
+                Round.AddStrike();
             }
         }
     }
