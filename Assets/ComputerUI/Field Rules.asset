@@ -93,7 +93,7 @@ MonoBehaviour:
       introduction: "Use the module tabs for defusal rules. Pop-ups can cover those pages while the countdown keeps running."
       rules:
       - condition: "Pop-up Ad"
-        response: "After the chime, close all seven ads. Click each tiny X while it is visible. It reappears elsewhere inside its own window."
+        response: "Seven ads cover the manual. Click the blinking X on the top ad to reveal the next one. Close all seven to read the page."
       - condition: "Long EULA"
         response: "Scroll to the end, then click Accept."
       - condition: "Captcha Wall"
@@ -109,7 +109,7 @@ MonoBehaviour:
       introduction: "Use the PC controls to recover the manual when an alarm or display fault interrupts you."
       rules:
       - condition: "Loud Audio"
-        response: "Find the flashing Mute button and click it to silence the alarm."
+        response: "Click the flashing Mute button to open the mixer. Mute the channel whose meter pulses with the alarm."
       - condition: "Screen Glitch"
         response: "Hold Power Off for three seconds until the line fills. Then hold Wake monitor for three seconds to restore the display."
       - condition: "Wrong Language"

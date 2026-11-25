@@ -134,7 +134,8 @@ namespace CtrlAltDefuse.Desktop
             }
             if (mouse.leftButton.wasPressedThisFrame && target)
             {
-                target.GetComponentInParent<DesktopWindow>()?.Focus();
+                var window = target.GetComponentInParent<DesktopWindow>();
+                if (window && window.GetComponent<CanvasGroup>().interactable) window.Focus();
                 pressed = ExecuteEvents.ExecuteHierarchy(target, pointer, ExecuteEvents.pointerDownHandler);
             }
             if (mouse.leftButton.wasReleasedThisFrame && pressed)
