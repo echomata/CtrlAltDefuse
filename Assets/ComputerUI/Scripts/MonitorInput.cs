@@ -13,6 +13,7 @@ namespace CtrlAltDefuse.Desktop
         public GameObject roomCrosshair;
         [Min(.1f)] public float pointerSpeed = 1;
         public bool Engaged { get; private set; }
+        public bool ChangingView { get; private set; }
 
         RectTransform screen;
         MonitorRaycaster raycaster;
@@ -44,7 +45,7 @@ namespace CtrlAltDefuse.Desktop
 
         void Update()
         {
-            if (Time.timeScale == 0f) return;
+            if (Time.timeScale == 0f || ChangingView) return;
             var mouse = Mouse.current;
             if (!view || mouse == null) return;
             if (!Engaged)
@@ -77,8 +78,8 @@ namespace CtrlAltDefuse.Desktop
 
         public void Enter()
         {
-            if (Engaged || !view || !EventSystem.current) return;
-            Engaged = true;
+            if (Engaged || ChangingView || !view || !EventSystem.current) return;
+            ChangingView = true;
             pointer = new MonitorRaycaster.MonitorPointer(EventSystem.current);
             roomPosition = view.transform.position;
             roomRotation = view.transform.rotation;
@@ -93,7 +94,14 @@ namespace CtrlAltDefuse.Desktop
             float width = screen.TransformVector(Vector3.right * screen.rect.width).magnitude;
             float distance = Mathf.Max(height, width / view.aspect) * .55f / Mathf.Tan(view.fieldOfView * Mathf.Deg2Rad * .5f);
             view.nearClipPlane = Mathf.Min(roomNearClip, distance * .25f);
-            view.transform.SetPositionAndRotation(screen.position - screen.forward * distance, screen.rotation);
+            StartCoroutine(CameraController.MoveTo(view.transform, screen.position - screen.forward * distance,
+                screen.rotation, EnableMonitor));
+        }
+
+        void EnableMonitor()
+        {
+            ChangingView = false;
+            Engaged = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             cursor.gameObject.SetActive(true);
@@ -154,21 +162,37 @@ namespace CtrlAltDefuse.Desktop
         {
             if (!Engaged) return;
             Engaged = false;
+            ChangingView = true;
+            ClearPointer();
+            StartCoroutine(CameraController.MoveTo(view.transform, roomPosition, roomRotation, RestoreDesk));
+        }
+
+        void ClearPointer()
+        {
             if (hover) ExecuteEvents.Execute(hover, pointer, ExecuteEvents.pointerExitHandler);
             if (pressed) ExecuteEvents.Execute(pressed, pointer, ExecuteEvents.pointerUpHandler);
             pressed = hover = null;
-            if (view)
-            {
-                view.nearClipPlane = roomNearClip;
-                view.transform.SetPositionAndRotation(roomPosition, roomRotation);
-            }
+            cursor.gameObject.SetActive(false);
+        }
+
+        void RestoreDesk()
+        {
+            ChangingView = false;
+            if (view) view.nearClipPlane = roomNearClip;
             if (look) look.enabled = lookWasEnabled;
             if (roomCrosshair) roomCrosshair.SetActive(crosshairWasActive);
-            cursor.gameObject.SetActive(false);
             Cursor.lockState = savedLock;
             Cursor.visible = savedVisibility;
         }
 
-        void OnDisable() => Leave();
+        void OnDisable()
+        {
+            if (!Engaged && !ChangingView) return;
+            StopAllCoroutines();
+            Engaged = false;
+            ClearPointer();
+            if (view) view.transform.SetPositionAndRotation(roomPosition, roomRotation);
+            RestoreDesk();
+        }
     }
 }

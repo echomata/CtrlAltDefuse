@@ -34,7 +34,7 @@ namespace CtrlAltDefuse.Gameplay
                 return;
             }
             controls = GetComponent<CanvasGroup>();
-            controls.interactable = false;
+            controls.blocksRaycasts = controls.interactable = false;
             housing = GetComponentInParent<Collider>();
             view = Camera.main;
             look = view.GetComponent<CameraController>();
@@ -58,14 +58,14 @@ namespace CtrlAltDefuse.Gameplay
             if (Time.timeScale == 0f || round.State != RoundState.Playing) return;
             if (!Focused)
             {
-                if (monitor && monitor.Engaged) return;
+                if (monitor && (monitor.Engaged || monitor.ChangingView)) return;
                 bool interact = Mouse.current?.leftButton.wasPressedThisFrame == true ||
                                 keyboard?.eKey.wasPressedThisFrame == true;
                 if (interact && Physics.Raycast(view.ViewportPointToRay(new Vector3(.5f, .5f)),
                     out var hit, look.interactDistance) && hit.collider == housing) Focus();
                 return;
             }
-            if (keyboard == null) return;
+            if (!controls.interactable || keyboard == null) return;
             if (keyboard.escapeKey.wasPressedThisFrame) Leave();
             else if (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame) codeLock.Submit();
             else if (keyboard.backspaceKey.wasPressedThisFrame || keyboard.deleteKey.wasPressedThisFrame) codeLock.Clear();
@@ -83,6 +83,7 @@ namespace CtrlAltDefuse.Gameplay
 
         void Focus()
         {
+            Focused = true;
             if (monitor) monitor.enabled = false;
             deskPosition = view.transform.position;
             deskRotation = view.transform.rotation;
@@ -93,21 +94,42 @@ namespace CtrlAltDefuse.Gameplay
             float width = panel.TransformVector(Vector3.right * panel.rect.width).magnitude;
             float height = panel.TransformVector(Vector3.up * panel.rect.height).magnitude;
             float distance = Mathf.Max(height, width / view.aspect) * .58f / Mathf.Tan(view.fieldOfView * Mathf.Deg2Rad * .5f);
-            view.transform.SetPositionAndRotation(panel.position - panel.forward * distance, panel.rotation);
+            StartCoroutine(CameraController.MoveTo(view.transform, panel.position - panel.forward * distance,
+                panel.rotation, EnablePanel));
+        }
+
+        void EnablePanel()
+        {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            Focused = controls.interactable = true;
+            controls.blocksRaycasts = controls.interactable = true;
         }
 
         void Leave()
         {
-            view.transform.SetPositionAndRotation(deskPosition, deskRotation);
-            look.enabled = true;
+            controls.blocksRaycasts = controls.interactable = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            StartCoroutine(CameraController.MoveTo(view.transform, deskPosition, deskRotation, RestoreDesk));
+        }
+
+        void RestoreDesk()
+        {
+            if (look) look.enabled = true;
             if (crosshair) crosshair.SetActive(showCrosshair);
             if (monitor) monitor.enabled = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            Focused = controls.interactable = false;
+            Focused = false;
+        }
+
+        void OnDisable()
+        {
+            if (!Focused) return;
+            StopAllCoroutines();
+            controls.blocksRaycasts = controls.interactable = false;
+            if (view) view.transform.SetPositionAndRotation(deskPosition, deskRotation);
+            RestoreDesk();
         }
 
         void LateUpdate() => RefreshDisplay();

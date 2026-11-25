@@ -83,6 +83,11 @@ namespace CtrlAltDefuse.Gameplay
         {
             var keyboard = Keyboard.current;
             if (keyboard == null) return;
+            if (round && keyboard.f5Key.wasPressedThisFrame)
+            {
+                LoadScene(GameScene);
+                return;
+            }
 #if UNITY_EDITOR
             if (keyboard.f7Key.wasPressedThisFrame)
                 ToggleHitboxes();
@@ -93,7 +98,7 @@ namespace CtrlAltDefuse.Gameplay
             if (keyboard.f9Key.wasPressedThisFrame) { DefeatTest.Trigger(round); return; }
 #endif
 
-            bool atDesk = !(bombPanel && bombPanel.Focused) && !(monitor && monitor.Engaged);
+            bool atDesk = !(bombPanel && bombPanel.Focused) && !(monitor && (monitor.Engaged || monitor.ChangingView));
             if (keyboard.pKey.wasPressedThisFrame || (atDesk && keyboard.escapeKey.wasPressedThisFrame))
                 PauseGame();
         }

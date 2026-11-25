@@ -1,8 +1,28 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
+    public static IEnumerator MoveTo(Transform view, Vector3 position, Quaternion rotation, Action onArrival)
+    {
+        const float duration = .5f;
+        Vector3 startPosition = view.position;
+        Quaternion startRotation = view.rotation;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            yield return null;
+            if (Time.timeScale == 0f) continue;
+            elapsed += Time.deltaTime;
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            view.SetPositionAndRotation(Vector3.Lerp(startPosition, position, progress),
+                Quaternion.Slerp(startRotation, rotation, progress));
+        }
+        onArrival();
+    }
+
     [Header("Look Sensitivity")]
     public float sensitivity = 0.15f;
     public float smoothSpeed = 12f;
