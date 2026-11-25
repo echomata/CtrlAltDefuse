@@ -93,7 +93,7 @@ MonoBehaviour:
       introduction: "Use the module tabs for defusal rules. Pop-ups can cover those pages while the countdown keeps running."
       rules:
       - condition: "Pop-up Ad"
-        response: "After the chime, click the tiny X while it is visible. It disappears and reappears elsewhere inside the ad."
+        response: "After the chime, close all seven ads. Click each tiny X while it is visible. It reappears elsewhere inside its own window."
       - condition: "Long EULA"
         response: "Scroll to the end, then click Accept."
       - condition: "Captcha Wall"
@@ -102,7 +102,7 @@ MonoBehaviour:
       introduction: "Use the desktop recovery controls when the pointer drifts or leaves a trail."
       rules:
       - condition: "Cursor Hijack"
-        response: "If the pointer drifts or reverses, click Recalibrate on the taskbar."
+        response: "Click Recalibrate in both Pointer Guard windows to stop the cursor from drifting and reversing."
       - condition: "Cursor Particle Trail"
         response: "Catch the moving Pointer Guard alert and click Recalibrate Cursor before it disappears."
     - title: "Restore audio and display"

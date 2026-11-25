@@ -93,7 +93,7 @@ MonoBehaviour:
       introduction: "Consulta las reglas en las pestañas de cada módulo. Las ventanas emergentes pueden taparlas mientras la cuenta atrás continúa."
       rules:
       - condition: "Anuncio emergente"
-        response: "Tras el aviso sonoro, pulsa la pequeña X mientras esté visible. Desaparece y vuelve a aparecer en otro lugar del anuncio."
+        response: "Tras el aviso sonoro, cierra los siete anuncios. Pulsa cada X mientras esté visible. Reaparece en otro lugar de su propia ventana."
       - condition: "Acuerdo de licencia"
         response: "Desplázate hasta el final y pulsa Aceptar."
       - condition: "Captcha"
@@ -102,7 +102,7 @@ MonoBehaviour:
       introduction: "Si el puntero se desvía o deja una estela, usa los controles de recuperación del escritorio."
       rules:
       - condition: "Puntero alterado"
-        response: "Si el puntero se desvía o se mueve en sentido contrario, pulsa Recalibrar en la barra de tareas."
+        response: "Pulsa Recalibrar en las dos ventanas de control del puntero para que deje de desviarse y de moverse en sentido contrario."
       - condition: "Estela del puntero"
         response: "Busca la alerta móvil del control del puntero y pulsa Recalibrar cursor antes de que desaparezca."
     - title: "Recupera el sonido y la pantalla"

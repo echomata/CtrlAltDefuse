@@ -19,6 +19,7 @@ namespace CtrlAltDefuse.Desktop
         [Header("Virus sequence")]
         [SerializeField, Min(1)] float virusGapSeconds = 10f;
         [Header("Pop-up Ad")]
+        [SerializeField] PopUpAd.Design[] adDesigns;
         public AudioClip adChime;
         [Header("Loud Audio")]
         public AudioClip alarmClip;
@@ -34,7 +35,7 @@ namespace CtrlAltDefuse.Desktop
         LoudAudioPopup alarm;
         LongEulaPopup eula;
         PopUpAd ad;
-        Button guardCloseButton;
+        DesktopWindow upperCalibration, lowerCalibration;
         Virus nextVirus;
         bool PopupOpen => (ad?.IsOpen ?? false) || (eula?.IsOpen ?? false) || (alarm?.IsOpen ?? false)
             || (glitch?.IsOpen ?? false) || (captcha?.IsOpen ?? false) || (trail?.IsOpen ?? false)
@@ -52,7 +53,7 @@ namespace CtrlAltDefuse.Desktop
         {
             manualShortcut.onClick.AddListener(manual.Open);
             manualTask.onClick.AddListener(manual.Open);
-            guardShortcut.onClick.AddListener(guard.Open);
+            guardShortcut.onClick.AddListener(OpenGuard);
             calibrate.onClick.AddListener(Recalibrate);
             mute.onClick.AddListener(ToggleMute);
             power.onClick.AddListener(() => ClickStandby(true));
@@ -131,8 +132,11 @@ namespace CtrlAltDefuse.Desktop
 
         void LateUpdate()
         {
-            if (Hijacked && !Sleeping && guard.IsOpen &&
-                guard.transform.GetSiblingIndex() != guard.transform.parent.childCount - 1) guard.Focus();
+            if (Hijacked && !Sleeping && manual.IsOpen)
+            {
+                KeepAboveManual(upperCalibration);
+                KeepAboveManual(lowerCalibration);
+            }
             if (ad != null && ad.IsOpen) ad.KeepInFront();
             if (eula != null && eula.IsOpen) eula.KeepInFront();
             if (alarm != null && alarm.IsOpen) alarm.KeepInFront();
@@ -154,7 +158,7 @@ namespace CtrlAltDefuse.Desktop
         public void StartPopUpAd()
         {
             if (nextVirus != Virus.PopUpAd || Sleeping || Hijacked || PopupOpen) return;
-            ad ??= new PopUpAd(this, () => Schedule(Virus.LongEula));
+            ad ??= new PopUpAd(this, adDesigns, () => Schedule(Virus.LongEula));
             ad.Show();
             UpdateStatus();
             if (adChime && !clicks.mute) clicks.PlayOneShot(adChime);
@@ -166,16 +170,52 @@ namespace CtrlAltDefuse.Desktop
             hijackPhase = 0f;
             StartPointerSurge();
             Hijacked = true;
-            SetGuardClosable(false);
+            guard.Close();
+            if (!upperCalibration)
+                upperCalibration = CreateCalibration("Pointer tracking", Vector2.up, new Vector2(14, -14));
+            if (!lowerCalibration)
+                lowerCalibration = CreateCalibration("Pointer direction", Vector2.right, new Vector2(-14, 14));
+            upperCalibration.Open();
+            lowerCalibration.Open();
             UpdateStatus();
-            guard.Open();
             PlayClick();
         }
 
-        void SetGuardClosable(bool closable)
+        DesktopWindow CreateCalibration(string channel, Vector2 anchor, Vector2 offset)
         {
-            if (!guardCloseButton) guardCloseButton = guard.titleBar.GetComponentInChildren<Button>(true);
-            guardCloseButton.gameObject.SetActive(closable);
+            var window = Instantiate(guard, guard.transform.parent);
+            window.name = channel;
+            var frame = (RectTransform)window.transform;
+            frame.anchorMin = frame.anchorMax = frame.pivot = anchor;
+            frame.anchoredPosition = offset;
+            frame.Find(guardTitle.name).GetComponent<Text>().text = channel;
+            frame.Find(guardMessage.name).GetComponent<Text>().text =
+                "Click Recalibrate in both windows to restore cursor control.";
+            window.titleBar.GetComponentInChildren<Button>(true).gameObject.SetActive(false);
+            var button = frame.Find("Recalibrate").GetComponent<Button>();
+            button.onClick = new Button.ButtonClickedEvent();
+            button.onClick.AddListener(() =>
+            {
+                if (!Hijacked || Sleeping || !window.IsOpen) return;
+                window.Close();
+                if (upperCalibration.IsOpen || lowerCalibration.IsOpen) return;
+                Hijacked = false;
+                input.CenterCursor();
+                Schedule(Virus.LoudAudio);
+            });
+            return window;
+        }
+
+        void KeepAboveManual(DesktopWindow window)
+        {
+            if (window.IsOpen && window.transform.GetSiblingIndex() < manual.transform.GetSiblingIndex())
+                window.Focus();
+        }
+
+        void OpenGuard()
+        {
+            if (Hijacked) (upperCalibration.IsOpen ? upperCalibration : lowerCalibration).Focus();
+            else guard.Open();
         }
 
         void StartPointerSurge()
@@ -196,9 +236,8 @@ namespace CtrlAltDefuse.Desktop
         {
             if (Hijacked)
             {
-                Hijacked = false;
-                SetGuardClosable(true);
-                Schedule(Virus.LoudAudio);
+                OpenGuard();
+                return;
             }
             input.CenterCursor();
             UpdateStatus();
