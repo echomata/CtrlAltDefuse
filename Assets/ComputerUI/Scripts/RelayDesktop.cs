@@ -93,6 +93,7 @@ namespace CtrlAltDefuse.Desktop
 
         void Tick(float deltaTime)
         {
+            if (Time.timeScale == 0f) return;
             if (!Sleeping && glitch != null && glitch.IsOpen) glitch.Tick(deltaTime);
             if (!input.Engaged || Sleeping) return;
             if (Hijacked)
@@ -132,6 +133,7 @@ namespace CtrlAltDefuse.Desktop
 
         void LateUpdate()
         {
+            if (Time.timeScale == 0f) return;
             if (Hijacked && !Sleeping && manual.IsOpen)
             {
                 KeepAboveManual(upperCalibration);

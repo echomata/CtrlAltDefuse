@@ -15,7 +15,8 @@ namespace CtrlAltDefuse.Desktop
         Keyboard keyboard;
         string code, answer;
         public bool IsOpen => window.IsOpen;
-        bool CanType => IsOpen && desktop.isActiveAndEnabled && desktop.input.Engaged && !desktop.Sleeping;
+        bool CanType => Time.timeScale > 0f && IsOpen && desktop.isActiveAndEnabled
+            && desktop.input.Engaged && !desktop.Sleeping;
 
         public CaptchaWallPopup(RelayDesktop desktop, System.Action cleared)
         {
