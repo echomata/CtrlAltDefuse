@@ -93,7 +93,7 @@ MonoBehaviour:
       introduction: "Use the module tabs for defusal rules. Pop-ups can cover those pages while the countdown keeps running."
       rules:
       - condition: "Pop-up Ad"
-        response: "After the chime, close all seven ads. Click each tiny X while it is visible. It reappears elsewhere inside its own window."
+        response: "Seven ads cover the manual. Click the blinking X on the top ad to reveal the next one. Close all seven to read the page."
       - condition: "Long EULA"
         response: "Scroll to the end, then click Accept."
       - condition: "Captcha Wall"

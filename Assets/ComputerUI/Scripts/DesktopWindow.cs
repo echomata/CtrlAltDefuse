@@ -12,6 +12,12 @@ namespace CtrlAltDefuse.Desktop
         CanvasGroup group;
         float progress;
 
+        public void OpenImmediately()
+        {
+            progress = 1f;
+            Open();
+        }
+
         public void Open()
         {
             gameObject.SetActive(true);

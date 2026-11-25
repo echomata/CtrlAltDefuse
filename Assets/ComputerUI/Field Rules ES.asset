@@ -93,7 +93,7 @@ MonoBehaviour:
       introduction: "Consulta las reglas en las pestañas de cada módulo. Las ventanas emergentes pueden taparlas mientras la cuenta atrás continúa."
       rules:
       - condition: "Anuncio emergente"
-        response: "Tras el aviso sonoro, cierra los siete anuncios. Pulsa cada X mientras esté visible. Reaparece en otro lugar de su propia ventana."
+        response: "Siete anuncios tapan el manual. Pulsa la X parpadeante del anuncio superior para ver el siguiente. Cierra los siete para leer la página."
       - condition: "Acuerdo de licencia"
         response: "Desplázate hasta el final y pulsa Aceptar."
       - condition: "Captcha"
