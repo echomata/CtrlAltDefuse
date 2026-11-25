@@ -36,21 +36,21 @@ namespace CtrlAltDefuse.Gameplay
 
         public void PressDigit(int digit)
         {
-            if (Solved || !Round || Round.State != RoundState.Playing || Entry.Length == 3 || digit < 0 || digit > 9) return;
+            if (Solved || !Round || !Round.IsPlaying || Entry.Length == 3 || digit < 0 || digit > 9) return;
             Entry += digit.ToString();
             Feedback = Entry.Length == 3 ? "PRESS ENTER" : "ENTER 3 DIGITS";
         }
 
         public void Clear()
         {
-            if (Solved || !Round || Round.State != RoundState.Playing) return;
+            if (Solved || !Round || !Round.IsPlaying) return;
             Entry = "";
             Feedback = "ENTER 3 DIGITS";
         }
 
         public void Submit()
         {
-            if (Solved || !Round || Round.State != RoundState.Playing || Entry.Length != 3) return;
+            if (Solved || !Round || !Round.IsPlaying || Entry.Length != 3) return;
             if (Entry == answer)
             {
                 Solved = true;
