@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ee174ed5d4f4cbc897c1358dd60c27, type: 3}
+  m_Name: Field Rules ES
+  m_EditorClassIdentifier: Assembly-CSharp::CtrlAltDefuse.Desktop.ManualRuleTable
+  spanish: {fileID: 0}
+  sections:
+  - tab: "Cables"
+    pages:
+    - title: "Corta un cable"
+      introduction: "Cuenta los cables y lee sus colores de izquierda a derecha. Consulta la página correspondiente a esa cantidad. Un corte incorrecto suma una falta."
+      rules:
+      - condition: "4 cables"
+        response: "Consulta la página Cuatro cables."
+      - condition: "5 cables"
+        response: "Consulta la página Cinco cables."
+    - title: "Cuatro cables"
+      introduction: "Comprueba si se repite algún color. Aplica la primera regla que se cumpla."
+      rules:
+      - condition: "Se repite un color"
+        response: "Corta el primer cable por la izquierda cuyo color se repita."
+      - condition: "Cuatro colores distintos"
+        response: "Corta el segundo cable por la izquierda."
+    - title: "Cinco cables"
+      introduction: "Cuenta cuántas veces aparece cada color. Aplica la primera regla que se cumpla."
+      rules:
+      - condition: "Un color aparece una sola vez"
+        response: "Corta el primer cable por la izquierda cuyo color aparezca una sola vez."
+      - condition: "Todos los colores se repiten"
+        response: "Corta el cuarto cable por la izquierda."
+  - tab: "Teclado"
+    pages:
+    - title: "Descifra la etiqueta"
+      introduction: "Lee las tres letras sobre el teclado numérico. Convierte cada letra con la tabla de la página siguiente. Introduce los tres dígitos en el orden de la etiqueta."
+      rules:
+      - condition: "Ejemplo: CAT"
+        response: "C equivale a 2, A a 2 y T a 8. Introduce 228."
+      - condition: "Letras repetidas"
+        response: "Introduce el dígito cada vez que aparezca la letra."
+      - condition: "Código incorrecto"
+        response: "Un código incorrecto suma una falta."
+    - title: "Tabla de letras y dígitos"
+      introduction: "Busca cada letra en la tabla, de izquierda a derecha según la etiqueta."
+      rules:
+      - condition: "A B C"
+        response: "2"
+      - condition: "D E F"
+        response: "3"
+      - condition: "G H I"
+        response: "4"
+      - condition: "J K L"
+        response: "5"
+      - condition: "M N O"
+        response: "6"
+      - condition: "P Q R S"
+        response: "7"
+      - condition: "T U V"
+        response: "8"
+      - condition: "W X Y Z"
+        response: "9"
+  - tab: "Palanca"
+    pages:
+    - title: "Observa la luz"
+      introduction: "Observa la luz del módulo en la vista de la bomba. Tira de la palanca una vez mientras la luz esté verde."
+      rules:
+      - condition: "Verde"
+        response: "Tira ahora."
+      - condition: "Otro color"
+        response: "Espera a que la luz esté verde. Tirar antes o después suma una falta."
+  - tab: "Tiempo"
+    pages:
+    - title: "Tiempo y faltas"
+      introduction: "Cada ronda comienza en 5:00. La cuenta atrás continúa mientras consultas el manual, atiendes las ventanas emergentes o cambias de vista."
+      rules:
+      - condition: "Victoria"
+        response: "Desactiva los módulos de cables, teclado y palanca antes de 0:00."
+      - condition: "Tiempo agotado"
+        response: "La bomba explota al llegar a 0:00."
+      - condition: "Tercera falta"
+        response: "La ronda termina de inmediato. Cada corte, código o tirón incorrecto suma una falta."
+  - tab: "Recuperación"
+    pages:
+    - title: "Desbloquea las páginas"
+      introduction: "Consulta las reglas en las pestañas de cada módulo. Las ventanas emergentes pueden taparlas mientras la cuenta atrás continúa."
+      rules:
+      - condition: "Anuncio emergente"
+        response: "Tras el aviso sonoro, pulsa la pequeña X mientras esté visible. Desaparece y vuelve a aparecer en otro lugar del anuncio."
+      - condition: "Acuerdo de licencia"
+        response: "Desplázate hasta el final y pulsa Aceptar."
+      - condition: "Captcha"
+        response: "Escribe los caracteres que aparecen y envía la respuesta."
+    - title: "Recupera el puntero"
+      introduction: "Si el puntero se desvía o deja una estela, usa los controles de recuperación del escritorio."
+      rules:
+      - condition: "Puntero alterado"
+        response: "Si el puntero se desvía o se mueve en sentido contrario, pulsa Recalibrar en la barra de tareas."
+      - condition: "Estela del puntero"
+        response: "Busca la alerta móvil del control del puntero y pulsa Recalibrar cursor antes de que desaparezca."
+    - title: "Recupera el sonido y la pantalla"
+      introduction: "Usa los controles del PC para volver al manual si te interrumpe una alarma o un fallo de pantalla."
+      rules:
+      - condition: "Alarma"
+        response: "Busca el botón Silenciar que parpadea y púlsalo para detener la alarma."
+      - condition: "Fallo de pantalla"
+        response: "Mantén pulsado Apagar durante tres segundos hasta que la línea se llene. Luego mantén pulsado Activar monitor otros tres segundos para recuperar la imagen."
+      - condition: "Idioma incorrecto"
+        response: "Vuelve a cargar el sitio web del manual para recuperar el idioma original."

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35ee174ed5d4f4cbc897c1358dd60c27, type: 3}
   m_Name: Field Rules
   m_EditorClassIdentifier: Assembly-CSharp::CtrlAltDefuse.Desktop.ManualRuleTable
+  spanish: {fileID: 11400000, guid: 85724fa0033244bba8a72b89f7fb2113, type: 2}
   sections:
   - tab: "Wires"
     pages:

@@ -9032,6 +9032,7 @@ MonoBehaviour:
   clicks: {fileID: 5134911817790421921}
   input: {fileID: 765105932738474505}
   virusGapSeconds: 10
+  reloadIcon: {fileID: 2800000, guid: a04763807a2c4f36b363a3a35cae7412, type: 3}
   signalNoise: {fileID: 2800000, guid: 03ad015ceb704fed94519a6ed3be6e10, type: 3}
   staticCrackle: {fileID: 8300000, guid: 29de6a253f5849fc9ad876f3c9deef8a, type: 3}
   alarmClip: {fileID: 8300000, guid: add1eec2dc0f43cbabdb0622e06b5eba, type: 3}

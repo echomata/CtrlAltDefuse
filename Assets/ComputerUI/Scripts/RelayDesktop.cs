@@ -7,7 +7,7 @@ namespace CtrlAltDefuse.Desktop
     {
         const float HijackCycleSeconds = 2.8f;
         const float InversionStartSeconds = 1.55f;
-        enum Virus { PopUpAd, LongEula, CursorHijack, LoudAudio, ScreenGlitch, CaptchaWall, CursorParticleTrail }
+        enum Virus { PopUpAd, LongEula, CursorHijack, LoudAudio, ScreenGlitch, CaptchaWall, CursorParticleTrail, WrongLanguage }
 
         public DesktopWindow manual, guard;
         public Button manualShortcut, manualTask, guardShortcut, calibrate, mute, power, wake;
@@ -25,6 +25,9 @@ namespace CtrlAltDefuse.Desktop
         [Header("Screen Glitch")]
         public Texture2D signalNoise;
         public AudioClip staticCrackle;
+        [Header("Wrong Language")]
+        [SerializeField] Texture2D reloadIcon;
+        WrongLanguagePopup language;
         CursorTrailPopup trail;
         CaptchaWallPopup captcha;
         ScreenGlitchPopup glitch;
@@ -34,7 +37,8 @@ namespace CtrlAltDefuse.Desktop
         Button guardCloseButton;
         Virus nextVirus;
         bool PopupOpen => (ad?.IsOpen ?? false) || (eula?.IsOpen ?? false) || (alarm?.IsOpen ?? false)
-            || (glitch?.IsOpen ?? false) || (captcha?.IsOpen ?? false) || (trail?.IsOpen ?? false);
+            || (glitch?.IsOpen ?? false) || (captcha?.IsOpen ?? false) || (trail?.IsOpen ?? false)
+            || (language?.IsOpen ?? false);
         public bool Hijacked { get; private set; }
         public bool Sleeping => standby.activeSelf;
         public bool CursorInverted => Hijacked && !Sleeping && hijackPhase >= InversionStartSeconds;
@@ -78,6 +82,7 @@ namespace CtrlAltDefuse.Desktop
                 Virus.ScreenGlitch => "Glitch",
                 Virus.CaptchaWall => "Captcha",
                 Virus.CursorParticleTrail => "Trail",
+                Virus.WrongLanguage => "Locale",
                 _ => "Hijack"
             };
             statusLabel.text = $"{name} {seconds}s";
@@ -120,6 +125,7 @@ namespace CtrlAltDefuse.Desktop
                 case Virus.ScreenGlitch: StartScreenGlitch(); break;
                 case Virus.CaptchaWall: StartCaptchaWall(); break;
                 case Virus.CursorParticleTrail: StartCursorParticleTrail(); break;
+                case Virus.WrongLanguage: StartWrongLanguage(); break;
             }
         }
 
@@ -134,6 +140,7 @@ namespace CtrlAltDefuse.Desktop
             if (captcha != null && captcha.IsOpen) captcha.KeepInFront();
             if (trail != null && (trail.IsOpen || trail.IsFading))
                 trail.UpdateTrail(Time.unscaledDeltaTime, trail.IsOpen && input.Engaged && !Sleeping);
+            if (language != null && language.IsOpen) language.KeepInFront();
         }
 
         public void StartLongEula()
@@ -203,7 +210,7 @@ namespace CtrlAltDefuse.Desktop
             if (trail == null) return;
             trail.Clear();
             input.CenterCursor();
-            Schedule(Virus.PopUpAd);
+            Schedule(Virus.WrongLanguage);
         }
 
         public void StartLoudAudio()
@@ -238,6 +245,14 @@ namespace CtrlAltDefuse.Desktop
             UpdateStatus();
         }
 
+        public void StartWrongLanguage()
+        {
+            if (nextVirus != Virus.WrongLanguage || Sleeping || Hijacked || PopupOpen) return;
+            language ??= new WrongLanguagePopup(this, reloadIcon, () => Schedule(Virus.PopUpAd));
+            language.Show();
+            UpdateStatus();
+        }
+
         void OnDisable() => captcha?.DetachKeyboard();
 
         void UpdateStatus()
@@ -247,8 +262,15 @@ namespace CtrlAltDefuse.Desktop
                 ? "Your pointer drifts and sometimes reverses direction. Use Recalibrate to restore control."
                 : "Pointer tracking is stable. Recalibrate at any time to return the cursor to the center.";
             bool interference = Hijacked || PopupOpen;
-            if (interference) statusLabel.text = "Interference";
+            if (language != null && language.IsOpen)
+            {
+                guardTitle.text = "Puntero calibrado";
+                guardMessage.text = "El puntero funciona bien. Pulsa Recalibrar para centrarlo.";
+                statusLabel.text = "Interferencia";
+            }
+            else if (interference) statusLabel.text = "Interference";
             else ShowCountdown();
+            RefreshMuteLabel();
             statusLamp.color = interference ? new Color32(247, 119, 75, 255) : new Color32(110, 223, 178, 255);
         }
 
@@ -256,7 +278,14 @@ namespace CtrlAltDefuse.Desktop
         {
             clicks.mute = !clicks.mute;
             alarm?.SetMuted(clicks.mute || Sleeping);
-            muteLabel.text = clicks.mute ? "Unmute" : "Mute";
+            RefreshMuteLabel();
+        }
+
+        void RefreshMuteLabel()
+        {
+            muteLabel.text = language != null && language.IsOpen
+                ? (clicks.mute ? "Sonido" : "Silenciar")
+                : (clicks.mute ? "Unmute" : "Mute");
         }
 
         void ClickStandby(bool value)

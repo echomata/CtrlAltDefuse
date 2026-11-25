@@ -13,6 +13,20 @@ namespace CtrlAltDefuse.Desktop
         public ScrollRect scroll;
         int section, page;
         Button[] tabs;
+        bool spanish;
+        ManualRuleTable CurrentTable => spanish ? table.spanish : table;
+
+        public void SetSpanish(bool enabled)
+        {
+            bool useSpanish = enabled && table && table.spanish;
+            if (spanish == useSpanish) return;
+            spanish = useSpanish;
+            // A closed manual may receive the effect before its first Awake.
+            if (tabs == null) return;
+            float position = scroll.verticalNormalizedPosition;
+            Show(section, page);
+            scroll.verticalNormalizedPosition = position;
+        }
 
         void Awake()
         {
@@ -27,7 +41,6 @@ namespace CtrlAltDefuse.Desktop
                 Button tab = Instantiate(tabTemplate, tabList);
                 tab.gameObject.SetActive(true);
                 ((RectTransform)tab.transform).anchoredPosition = new Vector2(0, -40 * i);
-                tab.GetComponentInChildren<Text>().text = table.sections[i].tab;
                 tab.onClick.AddListener(() => Show(index, 0));
                 tabs[i] = tab;
             }
@@ -46,15 +59,21 @@ namespace CtrlAltDefuse.Desktop
             for (int i = 0; i < tabs.Length; i++)
             {
                 tabs[i].image.color = i == section ? new Color32(36, 72, 132, 255) : new Color32(219, 226, 227, 255);
-                tabs[i].GetComponentInChildren<Text>().color = i == section ? Color.white : new Color32(30, 48, 63, 255);
+                var label = tabs[i].GetComponentInChildren<Text>(true);
+                label.color = i == section ? Color.white : new Color32(30, 48, 63, 255);
+                label.text = CurrentTable.sections[i].tab;
             }
 
-            var pages = tabs.Length > 0 ? table.sections[section].pages : null;
+            var pages = tabs.Length > 0 ? CurrentTable.sections[section].pages : null;
             int count = pages?.Length ?? 0;
             page = Mathf.Clamp(requestedPage, 0, Mathf.Max(0, count - 1));
             var entry = count > 0 ? pages[page] : null;
-            pageTitle.text = entry?.title ?? "No entries";
-            pageNumber.text = count > 0 ? $"Page {page + 1} of {count}" : "0 pages";
+            pageTitle.text = entry?.title ?? (spanish ? "Sin entradas" : "No entries");
+            pageNumber.text = spanish
+                ? (count > 0 ? $"Página {page + 1} de {count}" : "0 páginas")
+                : (count > 0 ? $"Page {page + 1} of {count}" : "0 pages");
+            previous.GetComponentInChildren<Text>(true).text = spanish ? "Anterior" : "Previous";
+            next.GetComponentInChildren<Text>(true).text = spanish ? "Siguiente" : "Next";
             previous.interactable = page > 0;
             next.interactable = page + 1 < count;
             introduction.text = entry?.introduction ?? "";
@@ -67,7 +86,7 @@ namespace CtrlAltDefuse.Desktop
                     var row = Instantiate(rowTemplate, content);
                     row.gameObject.SetActive(true);
                     row.anchoredPosition = new Vector2(0, -y);
-                    var labels = row.GetComponentsInChildren<Text>();
+                    var labels = row.GetComponentsInChildren<Text>(true);
                     labels[0].text = rule.condition;
                     labels[1].text = rule.response;
                     float height = Mathf.Max(42, Mathf.Ceil(Mathf.Max(labels[0].preferredHeight, labels[1].preferredHeight)) + 14);
