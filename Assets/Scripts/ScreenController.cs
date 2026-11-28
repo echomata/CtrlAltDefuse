@@ -70,7 +70,7 @@ namespace CtrlAltDefuse.Gameplay
             BuildOverlay();
             if (round)
             {
-                bombPanel = FindAnyObjectByType<BombPanel>(FindObjectsInactive.Include);
+                bombPanel = FindAnyObjectByType<BombPanel>();
                 monitor = FindAnyObjectByType<MonitorInput>();
                 return;
             }

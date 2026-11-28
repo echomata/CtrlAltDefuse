@@ -12,6 +12,8 @@ namespace CtrlAltDefuse.Gameplay
         {
             public Button button;
             public Image stripe;
+            public Renderer[] cablePieces;
+            public GameObject cutSection;
             public Text label;
         }
 
@@ -31,14 +33,23 @@ namespace CtrlAltDefuse.Gameplay
         {
             round = FindAnyObjectByType<GameManager>();
             var colors = new WireColor[Random.Range(4, 6)];
+            var first = (RectTransform)slots[0].button.transform;
+            var second = (RectTransform)slots[1].button.transform;
+            var centerOffset = (second.anchoredPosition - first.anchoredPosition) * ((slots.Length - colors.Length) * .5f);
             for (int i = 0; i < slots.Length; i++)
             {
                 var slot = slots[i];
                 slot.button.gameObject.SetActive(i < colors.Length);
                 if (i >= colors.Length) continue;
+                ((RectTransform)slot.button.transform).anchoredPosition += centerOffset;
 
                 colors[i] = (WireColor)Random.Range(0, Palette.Length);
                 slot.stripe.color = Palette[(int)colors[i]];
+                var tint = new MaterialPropertyBlock();
+                tint.SetColor("_BaseColor", Palette[(int)colors[i]]);
+                tint.SetColor("_EmissionColor", ((Color)Palette[(int)colors[i]]).linear * .6f);
+                if (slot.cablePieces != null)
+                    foreach (var piece in slot.cablePieces) piece.SetPropertyBlock(tint);
                 slot.label.text = colors[i].ToString().ToUpperInvariant();
                 int index = i;
                 slot.button.onClick.AddListener(() => Cut(index));
@@ -67,6 +78,7 @@ namespace CtrlAltDefuse.Gameplay
             if (solved || !slot.button.interactable || !round.IsPlaying) return;
             slot.button.interactable = false;
             slot.stripe.enabled = false;
+            if (slot.cutSection) slot.cutSection.SetActive(false);
             slot.label.text += "\nCUT";
             if (index == correctWire)
             {

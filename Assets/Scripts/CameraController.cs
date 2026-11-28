@@ -5,11 +5,17 @@ using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    public static IEnumerator MoveTo(Transform view, Vector3 position, Quaternion rotation, Action onArrival)
+    public static IEnumerator MoveTo(Transform view, Vector3 position, Quaternion rotation, Action onArrival,
+        Transform orbitCenter = null)
     {
         const float duration = .5f;
         Vector3 startPosition = view.position;
         Quaternion startRotation = view.rotation;
+        // Blend the points being looked at while keeping the camera outside the case.
+        float startRadius = orbitCenter ? Vector3.Distance(startPosition, orbitCenter.position) : 0f;
+        float endRadius = orbitCenter ? Vector3.Distance(position, orbitCenter.position) : 0f;
+        Vector3 startAim = startPosition + startRotation * Vector3.forward * startRadius;
+        Vector3 endAim = position + rotation * Vector3.forward * endRadius;
         float elapsed = 0f;
         while (elapsed < duration)
         {
@@ -17,8 +23,10 @@ public class CameraController : MonoBehaviour
             if (Time.timeScale == 0f) continue;
             elapsed += Time.deltaTime;
             float progress = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-            view.SetPositionAndRotation(Vector3.Lerp(startPosition, position, progress),
-                Quaternion.Slerp(startRotation, rotation, progress));
+            var direction = Quaternion.Slerp(startRotation, rotation, progress);
+            var aim = Vector3.Lerp(startAim, endAim, progress);
+            var radius = Mathf.Lerp(startRadius, endRadius, progress);
+            view.SetPositionAndRotation(aim - direction * Vector3.forward * radius, direction);
         }
         onArrival();
     }
