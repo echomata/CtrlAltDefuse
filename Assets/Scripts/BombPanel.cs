@@ -15,6 +15,9 @@ namespace CtrlAltDefuse.Gameplay
         [Tooltip("Front, left, right, top. Leave empty for the single-panel prototype.")]
         [SerializeField] RectTransform[] faces = System.Array.Empty<RectTransform>();
         Face currentFace;
+        Face sideBeforeTop;
+        Coroutine cameraMove;
+        bool returningToDesk;
         GameManager round;
         CodeLock codeLock;
         MonitorInput monitor;
@@ -80,13 +83,10 @@ namespace CtrlAltDefuse.Gameplay
                     out var hit, look.interactDistance) && hit.collider == housing) Focus();
                 return;
             }
-            if (!controls.interactable || keyboard == null) return;
+            if (returningToDesk || keyboard == null) return;
             if (keyboard.escapeKey.wasPressedThisFrame) Leave();
-            else if (faces.Length > 0 && keyboard.leftArrowKey.wasPressedThisFrame) ShowFace(Face.Left);
-            else if (faces.Length > 0 && keyboard.rightArrowKey.wasPressedThisFrame) ShowFace(Face.Right);
-            else if (faces.Length > 0 && keyboard.upArrowKey.wasPressedThisFrame) ShowFace(Face.Top);
-            else if (faces.Length > 0 && keyboard.downArrowKey.wasPressedThisFrame) ShowFace(Face.Front);
-            else if (currentFace != Face.Front) return;
+            else if (faces.Length > 0 && NavigateFaces(keyboard)) return;
+            else if (!controls.interactable || currentFace != Face.Front) return;
             else if (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame) codeLock.Submit();
             else if (keyboard.backspaceKey.wasPressedThisFrame || keyboard.deleteKey.wasPressedThisFrame) codeLock.Clear();
             else
@@ -113,13 +113,37 @@ namespace CtrlAltDefuse.Gameplay
             MoveToFace(Face.Front, false);
         }
 
-        void ShowFace(Face face)
+        bool NavigateFaces(Keyboard keyboard)
         {
-            if (face != currentFace) MoveToFace(face, true);
+            if (currentFace == Face.Top)
+            {
+                if (keyboard.downArrowKey.wasPressedThisFrame)
+                    MoveToFace(sideBeforeTop, true);
+                return true;
+            }
+
+            if (keyboard.upArrowKey.wasPressedThisFrame)
+            {
+                sideBeforeTop = currentFace;
+                MoveToFace(Face.Top, true);
+            }
+            else if (keyboard.leftArrowKey.wasPressedThisFrame && currentFace != Face.Left)
+            {
+                MoveToFace(currentFace == Face.Front ? Face.Left : Face.Front, true);
+            }
+            else if (keyboard.rightArrowKey.wasPressedThisFrame && currentFace != Face.Right)
+            {
+                MoveToFace(currentFace == Face.Front ? Face.Right : Face.Front, true);
+            }
+            else return false;
+
+            return true;
         }
 
         void MoveToFace(Face face, bool orbit)
         {
+            bool redirecting = cameraMove != null;
+            if (redirecting) StopCoroutine(cameraMove);
             controls.blocksRaycasts = controls.interactable = false;
             currentFace = face;
             var panel = faces.Length > 0 ? faces[(int)face] : (RectTransform)transform;
@@ -127,12 +151,14 @@ namespace CtrlAltDefuse.Gameplay
             float width = panel.TransformVector(Vector3.right * panel.rect.width).magnitude;
             float height = panel.TransformVector(Vector3.up * panel.rect.height).magnitude;
             float distance = Mathf.Max(height, width / view.aspect) * .58f / Mathf.Tan(view.fieldOfView * Mathf.Deg2Rad * .5f);
-            StartCoroutine(CameraController.MoveTo(view.transform, panel.position - panel.forward * distance,
-                panel.rotation, EnablePanel, orbit ? transform : null));
+            cameraMove = StartCoroutine(CameraController.MoveTo(view.transform, panel.position - panel.forward * distance,
+                panel.rotation, EnablePanel, orbit ? transform : null,
+                duration: orbit ? .28f : .5f, easeIn: !redirecting));
         }
 
         void EnablePanel()
         {
+            cameraMove = null;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             controls.blocksRaycasts = controls.interactable = true;
@@ -140,15 +166,19 @@ namespace CtrlAltDefuse.Gameplay
 
         void Leave()
         {
+            if (cameraMove != null) StopCoroutine(cameraMove);
+            returningToDesk = true;
             controls.blocksRaycasts = controls.interactable = false;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            StartCoroutine(CameraController.MoveTo(view.transform, deskPosition, deskRotation, RestoreDesk,
+            cameraMove = StartCoroutine(CameraController.MoveTo(view.transform, deskPosition, deskRotation, RestoreDesk,
                 faces.Length > 0 ? transform : null));
         }
 
         void RestoreDesk()
         {
+            cameraMove = null;
+            returningToDesk = false;
             if (look) look.enabled = true;
             if (crosshair) crosshair.SetActive(showCrosshair);
             if (monitor) monitor.enabled = true;
@@ -175,7 +205,11 @@ namespace CtrlAltDefuse.Gameplay
             strikes.text = $"STRIKES   {round.Strikes} / 3";
             entry.text = codeLock.Entry.PadRight(3, '-');
             feedback.text = codeLock.Feedback;
-            hint.text = Focused ? "ARROWS  /  VIEWS      ESC  /  DESK" : "CLICK OR E   /   INSPECT";
+            if (hint)
+            {
+                hint.text = Focused ? "" : "CLICK OR E  /  INSPECT";
+                if (Focused && faces.Length == 0) hint.text = "ESC  /  DESK";
+            }
         }
     }
 }

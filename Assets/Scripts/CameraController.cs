@@ -6,11 +6,12 @@ using UnityEngine.InputSystem;
 public class CameraController : MonoBehaviour
 {
     public static IEnumerator MoveTo(Transform view, Vector3 position, Quaternion rotation, Action onArrival,
-        Transform orbitCenter = null)
+        Transform orbitCenter = null, float duration = .5f, bool easeIn = true)
     {
-        const float duration = .5f;
         Vector3 startPosition = view.position;
         Quaternion startRotation = view.rotation;
+        // A direct turn between opposite sides can take either arc. Pass the keypad.
+        bool oppositeSides = orbitCenter && Mathf.Abs(Quaternion.Dot(startRotation, rotation)) < .0001f;
         // Blend the points being looked at while keeping the camera outside the case.
         float startRadius = orbitCenter ? Vector3.Distance(startPosition, orbitCenter.position) : 0f;
         float endRadius = orbitCenter ? Vector3.Distance(position, orbitCenter.position) : 0f;
@@ -22,8 +23,15 @@ public class CameraController : MonoBehaviour
             yield return null;
             if (Time.timeScale == 0f) continue;
             elapsed += Time.deltaTime;
-            float progress = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            float t = Mathf.Clamp01(elapsed / duration);
+            float progress = easeIn ? Mathf.SmoothStep(0f, 1f, t) : t * (2f - t);
             var direction = Quaternion.Slerp(startRotation, rotation, progress);
+            if (oppositeSides)
+            {
+                direction = progress < .5f
+                    ? Quaternion.Slerp(startRotation, orbitCenter.rotation, progress * 2f)
+                    : Quaternion.Slerp(orbitCenter.rotation, rotation, progress * 2f - 1f);
+            }
             var aim = Vector3.Lerp(startAim, endAim, progress);
             var radius = Mathf.Lerp(startRadius, endRadius, progress);
             view.SetPositionAndRotation(aim - direction * Vector3.forward * radius, direction);

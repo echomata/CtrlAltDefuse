@@ -11,6 +11,7 @@ namespace CtrlAltDefuse.Gameplay
         [SerializeField] Text colorLabel, status;
         [SerializeField] Button lever;
         [SerializeField] RectTransform handle;
+        [SerializeField] float pulledAngle = -50f;
         GameManager round;
         LightState lightState;
         float elapsed;
@@ -52,7 +53,7 @@ namespace CtrlAltDefuse.Gameplay
             {
                 solved = true;
                 lever.interactable = false;
-                handle.localRotation = Quaternion.Euler(0, 0, -50);
+                handle.localRotation = Quaternion.Euler(0, 0, pulledAngle);
                 status.text = "DEFUSED";
                 round.Defuse(Module.LeverPull);
             }
